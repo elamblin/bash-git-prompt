@@ -15,7 +15,18 @@ if [ -z "${__GIT_PROMPT_DIR}" ]; then
   __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
-gitstatus=$( LC_ALL=C git status --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-all} --porcelain --branch )
+# mise en cache du status pendant 1 minute
+#gitstatus=$( LC_ALL=C git status --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-all} --porcelain --branch )
+repo=$(git rev-parse --show-toplevel 2> /dev/null)
+statusMsg="$repo/.git/STATUS_MSG"
+matches=$(find "$statusMsg" -mmin +3 2> /dev/null)
+gitstatusfile=$(find "$statusMsg" 2> /dev/null)
+if [[ -n "$matches" || -z "$gitstatusfile" ]]; then
+  gitstatus=$( LC_ALL=C git status --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-all} --porcelain --branch )
+  echo "$gitstatus" > "$statusMsg"
+else
+  gitstatus=$( cat "$statusMsg")
+fi
 
 # if the status is fatal, exit now
 [[ "$?" -ne 0 ]] && exit 0
