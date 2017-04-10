@@ -19,7 +19,7 @@ fi
 #gitstatus=$( LC_ALL=C git status --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-all} --porcelain --branch )
 repo=$(git rev-parse --show-toplevel 2> /dev/null)
 statusMsg="$repo/.git/STATUS_MSG"
-matches=$(find "$statusMsg" -mmin +3 2> /dev/null)
+matches=$(find "$statusMsg" -mmin +1 2> /dev/null)
 gitstatusfile=$(find "$statusMsg" 2> /dev/null)
 if [[ -n "$matches" || -z "$gitstatusfile" ]]; then
   gitstatus=$( LC_ALL=C git status --untracked-files=${__GIT_PROMPT_SHOW_UNTRACKED_FILES:-all} --porcelain --branch )
